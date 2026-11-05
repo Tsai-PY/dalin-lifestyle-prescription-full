@@ -1063,6 +1063,12 @@
 
     .nearest-top-one-container {
 
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 5px;
+
       margin-bottom: 6px;
 
     }
@@ -4501,7 +4507,8 @@
 
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
 
-            <button type="button" id="focusRouteBtn" style="padding:4px 10px; font-size:0.78rem; font-weight:700; border-radius:6px; border:1px solid #2563eb; background:#eff6ff; color:#1d4ed8; cursor:pointer;">🧭 聚焦規劃路線</button>
+            <button type="button" id="focusRouteBtn" style="padding:4px 10px; font-size:0.78rem; font-weight:700; border-radius:6px; border:1px solid #2563eb; background:#eff6ff; color:#1d4ed8; cursor:pointer;" title="聚焦並放大顯示當前選取的服務點規劃路線">🧭 聚焦規劃路線</button>
+            <button type="button" id="showAllFiveBtn" style="padding:4px 10px; font-size:0.78rem; font-weight:700; border-radius:6px; border:1px solid #0f766e; background:#f0fdfa; color:#0f766e; cursor:pointer;" title="在地圖上完整顯示最近的 5 個服務點與目前位置">📍 顯示最近5點</button>
 
             
 
@@ -7973,7 +7980,7 @@
 
     // 在 Google Map 上繪製從「目前位置」沿著現有道路到「所選生活處方位置」的規劃路線並自動調整視野
 
-    async function drawRouteOnGoogleMap(origin, destination, gRouteResult, modeKey) {
+    async function drawRouteOnGoogleMap(origin, destination, gRouteResult, modeKey, fitAllFive = true) {
 
       if (!state.isGoogleMapsReady || !state.googleMap) return;
 
@@ -8205,8 +8212,17 @@
 
 
 
-      // 自動縮放平移地圖，完整呈現「目前位置」沿道路到「所選生活處方位置」的規劃路線
+      // 查詢開始與規劃路線時，地圖預設同時涵蓋「目前位置」與「最近的五個服務點」
+      if (fitAllFive) {
+        const topFive = (state.allSortedCandidates && state.allSortedCandidates.length > 0)
+          ? state.allSortedCandidates.slice(0, 5)
+          : (state.nearestFive || []).slice(0, 5);
+        topFive.forEach(pt => {
+          routeBounds.extend({ lat: Number(pt.lat), lng: Number(pt.lng) });
+        });
+      }
 
+      // 自動縮放平移地圖，完整呈現「目前位置」與「最近的五個服務點」及規劃路線
       state.googleMap.fitBounds(routeBounds, 70);
 
     }
@@ -8395,7 +8411,7 @@
 
     // 步驟 4：當使用者選擇某個服務點時，顯示完整資訊（名稱、地址、電話、營業時間、到達該地點的時間）並繪製路線
 
-    async function selectServicePoint(item) {
+    async function selectServicePoint(item, fitAllFive = true) {
 
       const requestSeq = (state.selectionSeq = (state.selectionSeq || 0) + 1);
 
@@ -8503,11 +8519,11 @@
 
             };
 
-            await drawRouteOnGoogleMap(state.userLocation, item, gRoute.value, modeKey);
+            await drawRouteOnGoogleMap(state.userLocation, item, gRoute.value, modeKey, fitAllFive);
 
           } else {
 
-            await drawRouteOnGoogleMap(state.userLocation, item, null, modeKey);
+            await drawRouteOnGoogleMap(state.userLocation, item, null, modeKey, fitAllFive);
 
           }
 
@@ -9124,22 +9140,36 @@
 
 
       // 地圖工具列：聚焦目前規劃路線 
-
       const focusRouteBtn = document.getElementById("focusRouteBtn");
-
       if (focusRouteBtn) {
-
         focusRouteBtn.addEventListener("click", () => {
-
           if (state.selectedItem) {
-
-            selectServicePoint(state.selectedItem);
-
+            selectServicePoint(state.selectedItem, false);
           }
-
         });
-
       }
+
+      // 地圖工具列：在地圖上完整顯示最近的 5 個服務點與目前位置
+      const showAllFiveBtn = document.getElementById("showAllFiveBtn");
+      if (showAllFiveBtn) {
+        showAllFiveBtn.addEventListener("click", () => {
+          fitMapToTopFiveAndUser();
+        });
+      }
+
+    async function fitMapToTopFiveAndUser() {
+      if (!state.isGoogleMapsReady || !state.googleMap) return;
+      const { LatLngBounds } = await google.maps.importLibrary("core");
+      const bounds = new LatLngBounds();
+      bounds.extend({ lat: Number(state.userLocation.lat), lng: Number(state.userLocation.lng) });
+      const topFive = (state.allSortedCandidates && state.allSortedCandidates.length > 0)
+        ? state.allSortedCandidates.slice(0, 5)
+        : (state.nearestFive || []).slice(0, 5);
+      topFive.forEach(pt => {
+        bounds.extend({ lat: Number(pt.lat), lng: Number(pt.lng) });
+      });
+      state.googleMap.fitBounds(bounds, 70);
+    }
 
 
 
