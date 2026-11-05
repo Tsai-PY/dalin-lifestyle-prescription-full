@@ -7432,9 +7432,9 @@
           map: state.googleMap,
           position: userPos,
           title: `目前位置：${state.userLocation.label}`,
+          content: userPin.element,
           zIndex: 999
         });
-        userMarker.append(userPin);
         state.googleUserMarker = userMarker;
 
         // 取得距離目前位置最近的五個服務點
@@ -7477,10 +7477,10 @@
             map: state.googleMap,
             position: pos,
             title: markerTitle,
+            content: pin.element,
             gmpClickable: true,
             zIndex: isSelected ? 1000 : (980 + (10 - Math.min(10, Number(rankStr) || 0)))
           });
-          marker.append(pin);
 
           if (marker.element) {
             marker.element.title = markerTitle;
