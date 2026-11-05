@@ -4140,6 +4140,9 @@
         <span class="status-dot active" id="apiStatusDot"></span>
         <span id="apiStatusText">已連線網站資料庫（正在載入 Google Maps...）</span>
       </div>
+      <button type="button" class="btn-header" id="btnOpenUserManual" title="閱讀與下載生活處方系統完整使用手冊（資料查詢與資料維護）" style="background:#059669; color:#ffffff; font-weight:700;">
+        📖 使用手冊
+      </button>
       <button type="button" class="btn-header" id="btnSyncLatestData" title="立即同步官方最新處方服務點說明與圖片資料（iPad / 行動裝置可即時更新）" style="background:#0284c7; color:#ffffff; font-weight:700; transition: background 0.25s ease, color 0.25s ease;">
         🔄 同步最新資料
       </button>
@@ -4943,7 +4946,7 @@
         </div>
 
         <div>
-
+          <a href="生活處方系統使用手冊.html" target="_blank" rel="noopener" style="color:var(--primary); font-weight:700; text-decoration:none; margin-right:12px;">📖 系統使用手冊下載與線上閱讀</a>
           使用 Google Maps Platform 服務須遵守
 
           <a href="https://cloud.google.com/maps-platform/terms?utm_campaign=gmp_git_agentskills_v1" target="_blank" rel="noopener">Google Maps Platform 服務條款</a>
@@ -4975,6 +4978,58 @@
   </footer>
 
 
+
+  <!-- 生活處方系統使用手冊對話框 (支援在線閱讀、下載 HTML 離線手冊與另存為 PDF) -->
+  <dialog id="userManualDialog" closedby="any" aria-labelledby="manualDialogTitle" style="max-width: 680px;">
+    <div class="dialog-inner">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+        <div>
+          <span style="display:inline-block; font-size:0.75rem; font-weight:800; color:#0f766e; background:#ccfbf1; padding:2px 8px; border-radius:999px; margin-bottom:6px;">官方操作指南 v2026.11</span>
+          <h2 class="dialog-title" id="manualDialogTitle" style="margin:0;">📖 生活處方系統使用手冊（查詢與維護）</h2>
+        </div>
+        <button type="button" id="closeManualDialogXBtn" style="background:none; border:none; font-size:1.3rem; cursor:pointer; color:#64748b; line-height:1;" title="關閉">✕</button>
+      </div>
+      <p class="dialog-desc">
+        本手冊涵蓋<strong>「第一部分：生活處方資料查詢」</strong>（起點定位、六大處方、交通方式、最近五點、詳細導航）與<strong>「第二部分：生活處方資料維護」</strong>（單一圖層維護、新增編輯點位、大林轄區邊界防呆、KML 匯出入備份）之完整圖文指引。
+      </p>
+
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; margin-bottom:16px;">
+        <div style="font-weight:800; font-size:0.92rem; color:#0f172a; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+          <span>📥 手冊下載與閱讀方式</span>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          <a href="生活處方系統使用手冊.html" download="嘉義縣大林鎮生活處方系統使用手冊.html" class="btn-primary" style="display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; padding:10px 12px; font-size:0.88rem; font-weight:700; border-radius:8px; background:#0f766e; color:#fff; text-align:center;">
+            📥 下載手冊檔案 (HTML)
+          </a>
+          <a href="生活處方系統使用手冊.html" target="_blank" rel="noopener" class="btn-secondary" style="display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; padding:10px 12px; font-size:0.88rem; font-weight:700; border-radius:8px; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; text-align:center;">
+            🖨️ 開啟閱讀／另存為 PDF ↗
+          </a>
+        </div>
+        <div style="margin-top:8px; text-align:center;">
+          <a href="生活處方系統使用手冊.md" download="嘉義縣大林鎮生活處方系統使用手冊.md" style="font-size:0.8rem; color:#64748b; text-decoration:underline;">
+            📄 下載 Markdown 原始說明文件 (.md)
+          </a>
+        </div>
+      </div>
+
+      <div class="dialog-steps" style="max-height: 250px; overflow-y: auto; padding-right: 4px;">
+        <strong style="color:#0f172a;">⚡ 系統功能核心要點速覽：</strong>
+        <ul style="margin: 8px 0 0 18px; font-size: 0.85rem; color:#334155; line-height: 1.65;">
+          <li><strong>生活處方查詢</strong>：依「飲食健康、身體活動、充足睡眠、壓力管理、正向人際、藥物安全」六大生活處方分類，選擇開車、步行或腳踏車，即時計算大林鎮在地道路網，畫面直接展示最近 5 處推薦點位與導航線路。</li>
+          <li><strong>地圖起點自訂</strong>：支援 GPS 即時定位，或於地圖任意點點擊即可更換查詢起點「我」。</li>
+          <li><strong>生活處方維護</strong>：遵循 Google My Maps 模式，單一圖層開啟維護，點擊地圖即可新增服務點，並具備大林鎮 21 里 223 處頂點之轄區多邊形邊界防呆機制。</li>
+          <li><strong>KML 備份還原</strong>：支援將修改後圖資完整匯出為標準 KML 檔，亦可隨時還原回 271 筆官方預設資料庫。</li>
+        </ul>
+      </div>
+
+      <div class="dialog-actions" style="margin-top: 18px;">
+        <button type="button" class="btn-secondary" id="closeManualDialogBtn">關閉視窗</button>
+        <a href="生活處方系統使用手冊.html" target="_blank" rel="noopener" class="btn-primary" style="display:inline-flex; align-items:center; gap:4px; text-decoration:none; padding:8px 16px; border-radius:8px; background:#0f766e; color:#ffffff; font-weight:700;">
+          📖 開啟完整手冊網頁 ↗
+        </a>
+      </div>
+    </div>
+  </dialog>
 
   <!-- Google Maps API Key 設定彈窗 (符合 Modern Web Guidance: light-dismiss-a-dialog) -->
 
@@ -6023,6 +6078,22 @@
 
 
     // 1. 設置 Dialog Light-Dismiss Fallback (符合 Modern Web Guidance `light-dismiss-a-dialog`)
+
+    const userManualDialog = document.getElementById("userManualDialog");
+    if (userManualDialog && !("closedBy" in HTMLDialogElement.prototype)) {
+      userManualDialog.addEventListener("click", (event) => {
+        if (event.target !== userManualDialog) return;
+        const rect = userManualDialog.getBoundingClientRect();
+        const isDialogContent = (
+          rect.top <= event.clientY &&
+          event.clientY <= rect.top + rect.height &&
+          rect.left <= event.clientX &&
+          event.clientX <= rect.left + rect.width
+        );
+        if (isDialogContent) return;
+        userManualDialog.close();
+      });
+    }
 
     const apiKeyDialog = document.getElementById("apiKeyDialog");
 
@@ -9194,6 +9265,27 @@
       });
 
 
+
+      // 開啟與關閉生活處方使用手冊 Dialog
+      const manualDlg = document.getElementById("userManualDialog");
+      const btnManual = document.getElementById("btnOpenUserManual");
+      if (btnManual && manualDlg) {
+        btnManual.addEventListener("click", () => {
+          manualDlg.showModal();
+        });
+      }
+      const closeManualBtn = document.getElementById("closeManualDialogBtn");
+      if (closeManualBtn && manualDlg) {
+        closeManualBtn.addEventListener("click", () => {
+          manualDlg.close();
+        });
+      }
+      const closeManualXBtn = document.getElementById("closeManualDialogXBtn");
+      if (closeManualXBtn && manualDlg) {
+        closeManualXBtn.addEventListener("click", () => {
+          manualDlg.close();
+        });
+      }
 
       // 開啟與關閉 API Key 設定 Dialog
 

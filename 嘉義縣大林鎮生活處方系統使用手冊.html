@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>嘉義縣大林鎮生活處方系統｜完整使用手冊（資料查詢與維護指南）</title>
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --primary-light: #f0fdfa;
+      --secondary: #0284c7;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border: #e2e8f0;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.75;
+      padding: 0;
+    }
+    
+    /* 頂部固定操作列 */
+    .top-action-bar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .top-action-bar .brand-label {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .action-btns {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .btn {
+      padding: 7px 14px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-secondary { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .btn-secondary:hover { background: #dbeafe; }
+    .btn-outline { background: #fff; color: var(--text-main); border-color: #cbd5e1; }
+    .btn-outline:hover { background: #f1f5f9; }
+
+    /* 手冊本體容器 */
+    .manual-container {
+      max-width: 980px;
+      margin: 28px auto 60px;
+      padding: 0 20px;
+    }
+
+    .manual-paper {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 48px 56px;
+    }
+
+    /* 封面 / 標頭 */
+    .manual-header {
+      border-bottom: 2px solid #0f766e;
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .manual-badge {
+      display: inline-block;
+      background: #ccfbf1;
+      color: #0f766e;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+    .manual-title {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+    .manual-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .manual-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+    .manual-meta span { display: inline-flex; align-items: center; gap: 4px; }
+
+    /* 目錄 */
+    .toc-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 40px;
+    }
+    .toc-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .toc-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 24px;
+    }
+    .toc-list a {
+      color: #0284c7;
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+    .toc-list a:hover { text-decoration: underline; color: #0369a1; }
+
+    /* 章節樣式 */
+    section.chapter {
+      margin-bottom: 48px;
+      scroll-margin-top: 70px;
+    }
+    h2.chapter-title {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 5px solid var(--primary);
+      padding-left: 14px;
+      margin-bottom: 18px;
+      margin-top: 10px;
+    }
+    h3.section-title {
+      font-size: 1.18rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin: 24px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    h4.subsection-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #334155;
+      margin: 16px 0 8px;
+    }
+    p { margin-bottom: 12px; font-size: 0.97rem; }
+    ul, ol { margin-left: 24px; margin-bottom: 16px; font-size: 0.95rem; }
+    li { margin-bottom: 6px; }
+
+    /* 資訊區塊 (Callouts) */
+    .callout {
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 18px 0;
+      font-size: 0.92rem;
+      line-height: 1.65;
+    }
+    .callout-info { background: #eff6ff; border-left: 4px solid #3b82f6; color: #1e40af; }
+    .callout-success { background: #f0fdf4; border-left: 4px solid #22c55e; color: #166534; }
+    .callout-warning { background: #fffbeb; border-left: 4px solid #f59e0b; color: #92400e; }
+    .callout-tip { background: #f0fdfa; border-left: 4px solid #14b8a6; color: #0f766e; }
+
+    /* 表格樣式 */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 18px 0;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+    th {
+      background: #f1f5f9;
+      color: #334155;
+      font-weight: 800;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #fafafa; }
+
+    /* 快捷方塊 (Step Cards) */
+    .step-box-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+    .step-box {
+      border: 1px solid var(--border);
+      background: #fafafa;
+      border-radius: 10px;
+      padding: 16px;
+      border-top: 3px solid var(--primary);
+    }
+    .step-box-num {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-right: 6px;
+    }
+    .step-box-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    /* 標籤 pill */
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin: 0 2px;
+    }
+
+    /* 頁尾 */
+    .manual-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      margin-top: 40px;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    /* 列印樣式優化 (@media print) */
+    @media print {
+      body { background: #fff; color: #000; font-size: 11pt; }
+      .top-action-bar, .toc-card .download-hint { display: none !important; }
+      .manual-container { max-width: 100%; margin: 0; padding: 0; }
+      .manual-paper { border: none; box-shadow: none; padding: 0; }
+      h2.chapter-title { page-break-before: always; border-left-color: #000; }
+      h2.chapter-title:first-of-type { page-break-before: avoid; }
+      .callout { border-left-width: 2px; }
+      a { color: #000; text-decoration: underline; }
+      a[href^="http"]:after { content: " (" attr(href) ")"; font-size: 80%; }
+    }
+
+    @media (max-width: 768px) {
+      .manual-paper { padding: 24px 18px; }
+      .toc-list { grid-template-columns: 1fr; }
+      .manual-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部操作列 -->
+  <header class="top-action-bar">
+    <div class="brand-label">
+      <span>🌿</span>
+      <span>嘉義縣大林鎮生活處方系統｜使用手冊</span>
+    </div>
+    <div class="action-btns">
+      <button type="button" class="btn btn-primary" onclick="window.print()">
+        🖨️ 列印手冊／另存為 PDF
+      </button>
+      <a href="生活處方系統使用手冊.html" download="嘉義縣大林鎮生活處方系統使用手冊.html" class="btn btn-secondary">
+        📥 下載手冊檔案
+      </a>
+      <a href="index.html" class="btn btn-outline">
+        ⬅️ 回生活處方系統
+      </a>
+    </div>
+  </header>
+
+  <div class="manual-container">
+    <article class="manual-paper">
+      
+      <!-- 標頭 -->
+      <div class="manual-header">
+        <span class="manual-badge">官方標準指引 v2026.11 最新版</span>
+        <h1 class="manual-title">嘉義縣大林鎮生活處方完整版系統<br>操作與維護使用手冊</h1>
+        <p class="manual-subtitle">涵蓋【第一部分：生活處方資料查詢】與【第二部分：生活處方資料維護】完整操作說明</p>
+        <div class="manual-meta">
+          <span>📅 最後編修日期：2026 年 11 月</span>
+          <span>📍 適用行政區：嘉義縣大林鎮（21 里全境）</span>
+          <span>🛡️ 處方圖層規範：六大生活處方核心（含藥物安全）</span>
+          <span>💻 支援載具：電腦、筆記型電腦、iPad、平板及智慧型手機</span>
+        </div>
+      </div>
+
+      <!-- 目錄導覽 -->
+      <nav class="toc-card" aria-label="手冊章節目錄">
+        <div class="toc-title">📑 手冊章節目錄</div>
+        <ul class="toc-list">
+          <li><a href="#chap1">第一章：系統簡介與雙核心架構</a></li>
+          <li><a href="#chap2">第二章：第一部分「資料查詢模組」操作指南</a></li>
+          <li><a href="#chap3">第三章：第二部分「資料維護模組」操作指南</a></li>
+          <li><a href="#chap4">第四章：服務點新增、編輯與座標防呆</a></li>
+          <li><a href="#chap5">第五章：資料同步、KML 匯入／匯出與還原</a></li>
+          <li><a href="#chap6">第六章：Google Maps API 金鑰設定指南</a></li>
+          <li><a href="#chap7">第七章：常見問題排解與操作技巧 (FAQ)</a></li>
+        </ul>
+      </nav>
+
+      <!-- 第一章：系統簡介與雙核心架構 -->
+      <section class="chapter" id="chap1">
+        <h2 class="chapter-title">第一章：系統簡介與雙核心架構</h2>
+        <p>
+          <strong>「嘉義縣大林鎮生活處方完整版系統」</strong> 是依據生活型態醫學（Lifestyle Medicine）六大基石專為大林鎮民量身打造之智慧生活指引地圖。系統整合大林鎮全境共計 <strong>271 處</strong> 社區生活處方資源點，並採用現代化雙核心模組化架構，將「前台日常民眾查詢」與「後台管理者圖資維護」完美整合於單一系統中。
+        </p>
+
+        <h3 class="section-title">🌿 生活處方六大核心領域</h3>
+        <p>系統將處方分類標準化為六大專屬圖層，以不同主題色調與圖示區隔：</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 18%;">處方領域</th>
+                <th style="width: 12%;">色彩標記</th>
+                <th style="width: 35%;">領域內涵</th>
+                <th style="width: 35%;">大林鎮代表性服務點範例</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>🥗 飲食健康</strong></td>
+                <td><span class="pill" style="background:#0f766e; color:#fff;">深青藍</span></td>
+                <td>全穀蔬食、少油鹽低糖營養飲食、友善有機小農</td>
+                <td>傳統公有市場、農會生鮮超市、有機農園、在地蔬食店家</td>
+              </tr>
+              <tr>
+                <td><strong>🏃 身體活動</strong></td>
+                <td><span class="pill" style="background:#ea580c; color:#fff;">亮橙橘</span></td>
+                <td>規律運動、肌力平衡訓練、有氧健走、戶外體操</td>
+                <td>大林鎮運動公園、國小運動操場、大林自行車道、社區休閒廣場</td>
+              </tr>
+              <tr>
+                <td><strong>😴 充足睡眠</strong></td>
+                <td><span class="pill" style="background:#4338ca; color:#fff;">深靛藍</span></td>
+                <td>優質睡眠衛生、身心定心空間、幽靜散步環境</td>
+                <td>大林慈濟醫院睡眠醫學中心、靜心綠色步道、社區樂齡好眠聚落</td>
+              </tr>
+              <tr>
+                <td><strong>🧘 壓力管理</strong></td>
+                <td><span class="pill" style="background:#7c3aed; color:#fff;">典雅紫</span></td>
+                <td>心理諮商、芳香紓壓、藝文手作、林蔭冥想空間</td>
+                <td>大林圖書館、大林糖廠木棧道、文創藝文空間、樂齡心理支持站</td>
+              </tr>
+              <tr>
+                <td><strong>🤝 正向人際</strong></td>
+                <td><span class="pill" style="background:#db2777; color:#fff;">活力粉</span></td>
+                <td>社區交流、志工服務、代間共融、樂齡關懷據點</td>
+                <td>大林鎮各里社區活動中心、關懷據點、長青食堂、長青學苑</td>
+              </tr>
+              <tr>
+                <td><strong>🛡️ 藥物安全</strong></td>
+                <td><span class="pill" style="background:#dc2626; color:#fff;">警示紅</span></td>
+                <td>用藥諮詢、慢性病連續處方箋領藥、高風險藥物評估</td>
+                <td>大林鎮各健保特約藥局、大林慈濟醫院藥劑部、大林衛生所</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="section-title">🔄 雙核心切換模式</h3>
+        <p>系統頂部設有清晰的兩大模組切換方框，使用者或管理者可依當前任務一鍵切換：</p>
+        <div class="step-box-grid">
+          <div class="step-box">
+            <div class="step-box-title">
+              <span class="step-box-num">1</span>
+              <span>第一部分：生活處方資料查詢</span>
+            </div>
+            <p style="font-size:0.88rem; color:#475569;">
+              供鎮民、醫療醫事人員、社區志工查詢生活處方。輸入當前位置或點擊地圖即可自動計算大林鎮現有道路網絡，推薦最近 5 處服務點並規劃行車、步行或自行車路線。
+            </p>
+          </div>
+          <div class="step-box">
+            <div class="step-box-title">
+              <span class="step-box-num">2</span>
+              <span>第二部分：生活處方資料維護</span>
+            </div>
+            <p style="font-size:0.88rem; color:#475569;">
+              依 Google My Maps（我的地圖）標準操作模式設計，採單一圖層聚焦維護。支援在邊界內新增標記、修改名稱說明、更換照片、匯出/匯入 KML 備份等完整功能。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 第二章：第一部分「資料查詢模組」操作指南 -->
+      <section class="chapter" id="chap2">
+        <h2 class="chapter-title">第二章：第一部分「資料查詢模組」操作指南</h2>
+        <p>
+          查詢模組採用左側四步驟引導式操作與右側即時互動地圖連動設計，讓長輩與初次使用者皆能輕鬆上手。
+        </p>
+
+        <h3 class="section-title">📍 起點與所在位置設定</h3>
+        <ul>
+          <li><strong>預設起點</strong>：預設為「大林鎮公所」（經緯度：23.602568, 120.471415）。</li>
+          <li><strong>📍 重新定位</strong>：點擊「重新定位」按鈕，系統將自動請求瀏覽器 GPS 權限，取得使用者當前真實座標。</li>
+          <li><strong>地圖自訂起點</strong>：直接在右側地圖上任何地點按下滑鼠左鍵（或於觸控螢幕輕點），系統將立即將該位置設為新的起點「我」，並重新計算所有處方點距離。</li>
+          <li><strong>🗺️ 大林鎮公所</strong>：點擊即可快速將起點還原為大林鎮公所。</li>
+        </ul>
+
+        <h3 class="section-title">🔢 查詢核心四步驟</h3>
+        <div class="step-box-grid">
+          <div class="step-box">
+            <div class="step-box-title"><span class="step-box-num">1</span>步驟 1：選擇生活處方領域</div>
+            <p style="font-size:0.88rem; color:#475569;">
+              點擊欲諮詢的處方領域（如「飲食健康」或「藥物安全」）。按鈕上會直接標示該領域共有幾處大林在地服務點。
+            </p>
+          </div>
+          <div class="step-box">
+            <div class="step-box-title"><span class="step-box-num">2</span>步驟 2：選擇前往交通方式</div>
+            <p style="font-size:0.88rem; color:#475569;">
+              可選「🚗 開車」、「🚶 步行」或「🚲 腳踏車」。系統將根據真實道路拓撲網格與平均移動速度換算精準路線與到達時間。
+            </p>
+          </div>
+          <div class="step-box">
+            <div class="step-box-title"><span class="step-box-num">3</span>步驟 3：瀏覽最近五個服務點</div>
+            <p style="font-size:0.88rem; color:#475569;">
+              畫面會<strong>立即呈現距離起點最近的 5 個推薦服務點</strong>，標示 1～5 名、直線與路程距離、預估時間膠囊，並提供關鍵字即時篩選。
+            </p>
+          </div>
+          <div class="step-box">
+            <div class="step-box-title"><span class="step-box-num">4</span>步驟 4：查看詳細資訊與導航</div>
+            <p style="font-size:0.88rem; color:#475569;">
+              點選任一點位後，步驟 4 即時顯示真實地址、聯絡電話、營業時間、說明與照片，並連動右側地圖畫出沿道路之導航軌跡。
+            </p>
+          </div>
+        </div>
+
+        <div class="callout callout-success">
+          <strong>💡 最新優化特點：</strong><br>
+          系統於查詢功能啟動或切換處方分類時，<strong>畫面上與地圖上立即看得到最近的五個服務點</strong>！
+          左側清單直接完整展開呈現第 1 至第 5 名的完整資訊卡；右側地圖亦自動調整邊界縮放（<code>fitBounds</code>），確保起點「我」與 1～5 號服務點標記同時完整呈現在視野內，不被畫面邊緣遮蔽。
+        </div>
+
+        <h3 class="section-title">🗺️ 右側互動地圖導航與工具列</h3>
+        <ul>
+          <li><strong>起點標記</strong>：以顯眼的藍色立體圖釘標示「我」。</li>
+          <li><strong>服務點標記</strong>：以處方領域專屬顏色標示「1、2、3、4、5」數字圖釘，當前選取的服務點會放大並帶有立體黑外框。</li>
+          <li><strong>道路導航路線</strong>：具備深藍光暈外框與導航藍主線，兩端點亦繪製正交接入路緣之步行動線虛線。</li>
+          <li><strong>工具列按鈕</strong>：
+            <ul>
+              <li><code>📍 顯示最近5點</code>：一鍵重置地圖視角，完整囊括起點與前 5 大最近服務點。</li>
+              <li><code>🧭 聚焦規劃路線</code>：針對當前選取的特定服務點與導航路徑進行細部放大檢視。</li>
+            </ul>
+          </li>
+          <li><strong>游標指到即時預覽</strong>：當滑鼠移到左側列表或地圖標記上方時，系統會自動跳出即時浮動預覽卡片，顯示該處方點之最新文字說明與現場實景照片。</li>
+        </ul>
+      </section>
+
+      <!-- 第三章：第二部分「資料維護模組」操作指南 -->
+      <section class="chapter" id="chap3">
+        <h2 class="chapter-title">第三章：第二部分「資料維護模組」操作指南</h2>
+        <p>
+          點擊頂部模式切換列的「<strong>第二部分：生活處方資料維護</strong>」即可進入後台管理工作台。
+          維護模組全面遵循 <strong>Google My Maps（我的地圖）</strong> 之工作邏輯，以單一圖層獨立開啟、防呆檢核與在地化邊界防護為核心準則。
+        </p>
+
+        <h3 class="section-title">📋 六大處方圖層單一開啟維護</h3>
+        <p>
+          為避免多圖層混雜造成管理人員誤刪誤改，維護模式嚴格維持「單一處方圖層開啟」原則：
+        </p>
+        <ol>
+          <li>於左側圖層清單點選欲維護之處方圖層（例如：「藥物安全」或「飲食健康」）。</li>
+          <li>地圖即時切換為該圖層專屬之所有服務點標記，左側下半部列表亦同步過濾為該圖層點位。</li>
+          <li>清單上方提供即時關鍵字過濾搜尋框，輸入關鍵字可即時篩選名稱或地址。</li>
+        </ol>
+
+        <h3 class="section-title">🛠️ 服務點檢視與修改工作面板</h3>
+        <p>
+          在左側點選任何服務點，中央檢視面板會呈現完整詳細欄位：
+        </p>
+        <ul>
+          <li><strong>名稱（Name）</strong>：服務點之標準名稱（如：大林慈濟醫院藥劑部）。</li>
+          <li><strong>處方類別（Category）</strong>：下拉選單可調整歸屬圖層（支援跨圖層搬移）。</li>
+          <li><strong>經緯度座標（Coordinates）</strong>：顯示緯度與經度，可手動輸入或直接在地圖上拖曳標記。</li>
+          <li><strong>說明內容（Description）</strong>：該生活處方點之服務細節、適合對象、健保服務或活動時間。</li>
+          <li><strong>現場實景照片（Images）</strong>：可貼入公開圖片網址，或直接點選「上傳本機照片」附加至該處方點。</li>
+        </ul>
+      </section>
+
+      <!-- 第四章：服務點新增、編輯與座標防呆 -->
+      <section class="chapter" id="chap4">
+        <h2 class="chapter-title">第四章：服務點新增、編輯與座標防呆</h2>
+
+        <h3 class="section-title">➕ 新增服務點之標準操作流程</h3>
+        <ol>
+          <li>確認目前開啟的為欲新增之正確處方圖層。</li>
+          <li>點擊上方 <strong>「➕ 在此圖層新增處方服務點」</strong> 按鈕。</li>
+          <li>地圖進入「點擊選點模式」，直接在右側地圖上目標位置點擊左鍵。</li>
+          <li>系統自動拾取點擊位置之經緯度座標，並載入大林鎮在地化地理邊界防護進行即時檢核。</li>
+          <li>於彈出之表單中填寫「服務點名稱」、「詳細說明」、「地址」與「圖片」。</li>
+          <li>點擊「確認儲存」，新點位立即寫入系統本機快取與資料庫中。</li>
+        </ol>
+
+        <div class="callout callout-warning">
+          <strong>⚠️ 大林鎮地理邊界嚴密防呆機制：</strong><br>
+          系統內建嘉義縣大林鎮法定轄區範圍多邊形演算法（包含大林鎮 21 里全境共 223 處精密邊界節點之 <code>isPointInDalinPolygon</code> 演算法）。<br>
+          <strong>若新增或修改之經緯度座標超出大林鎮轄區範圍（例如點到民雄、溪口或梅山轄區），系統將立即彈出防呆警示並拒絕儲存！</strong>此防呆機制可徹底杜絕人為誤點或外鄉鎮資料錯置。
+        </div>
+
+        <h3 class="section-title">✏️ 編輯與更新現有服務點</h3>
+        <p>
+          點選清單任一點位後，於右側編輯欄修改文字或照片，按下 <strong>「💾 儲存修改」</strong> 即時更新。<br>
+          若需微調座標，亦可直接點擊地圖上的標記並拖曳至正確街道門牌位置。
+        </p>
+
+        <h3 class="section-title">🗑️ 刪除服務點防護</h3>
+        <p>
+          點擊檢視區下方的 <strong>「🗑️ 刪除此服務點」</strong> 按鈕時，系統會跳出雙重確認視窗，避免誤按。刪除後即時自該處方圖層中移除並重新計算總點數。
+        </p>
+      </section>
+
+      <!-- 第五章：資料同步、KML 匯入／匯出與還原 -->
+      <section class="chapter" id="chap5">
+        <h2 class="chapter-title">第五章：資料同步、KML 匯入／匯出與還原</h2>
+
+        <h3 class="section-title">💾 匯出 KML 備份檔案（相容 Google Earth / My Maps）</h3>
+        <p>
+          在維護工作完成後，強烈建議匯出備份檔案：
+        </p>
+        <ol>
+          <li>點擊維護工具列之 <strong>「💾 匯出／備份 KML」</strong> 按鈕。</li>
+          <li>在對話框中選擇匯出範圍：
+            <ul>
+              <li><strong>整個地圖</strong>：匯出完整 6 個處方圖層、271 處服務點資料。</li>
+              <li><strong>僅目前圖層</strong>：僅匯出當前維護之單一圖層點位。</li>
+            </ul>
+          </li>
+          <li>點擊「⬇️ 下載 KML 備份檔」，系統會自動產生標準 <code>.kml</code> 格式檔案下載至您的電腦或 iPad「下載項目」中。</li>
+        </ol>
+
+        <h3 class="section-title">📂 匯入最新 KML 檔案</h3>
+        <p>
+          若有自 Google My Maps 下載之最新 KML 檔，或同仁備份之更新檔案：
+        </p>
+        <ol>
+          <li>點擊頂部標頭列的 <strong>「📂 匯入 KML 檔」</strong> 按鈕。</li>
+          <li>選取電腦中的 <code>.kml</code> 檔案。</li>
+          <li>系統將自動解析 Placemark 節點、圖層樣式顏色、坐標與說明內容，並即時更新至畫面與資料庫中。</li>
+        </ol>
+
+        <h3 class="section-title">🔄 同步與一鍵還原預設資料庫</h3>
+        <ul>
+          <li><strong>🔄 同步最新資料</strong>：位於頂部標頭列藍色按鈕。用於多台 iPad 或電腦需要即時拉取最新官方線上版點位與圖片資料時使用。</li>
+          <li><strong>🔄 還原系統預設資料</strong>：位於維護區底部「進階管理」按鈕。若資料操作錯誤或被不慎大量更動，點擊即可一鍵復原回最初始經過嚴格審核的大林鎮 271 處標準生活處方資料庫。</li>
+        </ul>
+      </section>
+
+      <!-- 第六章：Google Maps API 金鑰設定指南 -->
+      <section class="chapter" id="chap6">
+        <h2 class="chapter-title">第六章：Google Maps API 金鑰設定指南</h2>
+        <p>
+          系統具備雙模式運作彈性：<strong>「官方 Google Maps 向量地圖即時聯網模式」</strong> 與 <strong>「免金鑰 SVG 相對方位雷達降級預覽模式」</strong>。
+        </p>
+
+        <h3 class="section-title">🔑 設定 API Key 的效益</h3>
+        <ul>
+          <li>啟用真實街道 Google Maps 向量地圖與街景檢視。</li>
+          <li>透過 <strong>Google Places API (New)</strong> 自動查詢店家真實門牌地址、電話與今日營業時間。</li>
+          <li>透過 <strong>Google Routes API</strong> 依據即時路況計算最快行車與步行路程及到達時間。</li>
+        </ul>
+
+        <h3 class="section-title">🛠️ 免費申請測試用 Maps Demo Key 步驟</h3>
+        <ol>
+          <li>前往 <a href="https://mapsplatform.google.com/maps-demo-key?utm_campaign=gmp_git_agentskills_v1" target="_blank" rel="noopener">Google Maps Demo Key 申請頁面</a>。</li>
+          <li>使用一般 Google 帳號登入並勾選同意條款。</li>
+          <li>點擊產生測試用金鑰（Demo Key），並將金鑰字串複製。</li>
+          <li>回到生活處方系統，點選右上角 <strong>「🔑 API 金鑰」</strong> 按鈕。</li>
+          <li>將金鑰貼入輸入框中並點擊「儲存並啟用金鑰」。系統立即自動連線升級為完整版互動地圖。</li>
+        </ol>
+
+        <div class="callout callout-info">
+          <strong>🔒 安全性承諾：</strong><br>
+          您所輸入的金鑰僅會安全儲存在您當前設備之瀏覽器本機儲存區（<code>localStorage</code>），絕不會透過網路外傳或記錄至伺服器端，充分保障您的帳戶隱私與配額安全。
+        </div>
+      </section>
+
+      <!-- 第七章：常見問題排解與操作技巧 (FAQ) -->
+      <section class="chapter" id="chap7">
+        <h2 class="chapter-title">第七章：常見問題排解與操作技巧 (FAQ)</h2>
+
+        <h3 class="section-title">Q1：在手機或 iPad 上點選「📍 重新定位」為何沒有反應？</h3>
+        <p>
+          <strong>解答：</strong>行動瀏覽器（如 Safari、Chrome）因隱私政策要求，必須在使用者明確授權下才能存取位置：
+        </p>
+        <ol>
+          <li>請檢查網址列左側是否有「🔒」圖示，點擊並進入「網站設定」，將「位置」設定為「允許」。</li>
+          <li>iOS 裝置請至「設定」➔「隱私權與安全性」➔「定位服務」確認 Safari 的定位權限已開啟。</li>
+          <li>若仍無法定位，亦可直接於地圖上點選目前所在地點，系統一樣能完成精準測算。</li>
+        </ol>
+
+        <h3 class="section-title">Q2：在維護模式新增服務點時，跳出「座標超出大林鎮轄區範圍」提示？</h3>
+        <p>
+          <strong>解答：</strong>此為系統之在地化地理多邊形防呆機制。代表您點擊的位置落在民雄鄉、溪口鄉或梅山鄉等外轄區。請將地圖縮小並確認標記點位於大林鎮行政里轄區範圍內。
+        </p>
+
+        <h3 class="section-title">Q3：沒有 Google Maps API Key 時，系統可以正常使用嗎？</h3>
+        <p>
+          <strong>解答：</strong>可以！系統內建大林鎮現有道路路網拓撲幾何引擎（共計 2 萬餘節點與 3,219 條路網鏈結）與 SVG 距離雷達圖。即使在離線或無 API 金鑰狀態下，系統仍會以在地道路精準計算距離、行車時間並排列出前 5 大推薦點。
+        </p>
+
+        <h3 class="section-title">Q4：如何將本使用手冊列印成紙本或另存為 PDF 文件？</h3>
+        <p>
+          <strong>解答：</strong>本手冊已內建專業的列印版面樣式（<code>@media print</code>）：
+        </p>
+        <ol>
+          <li>點擊頁面頂部的 <strong>「🖨️ 列印手冊／另存為 PDF」</strong> 按鈕（或於鍵盤按下 <code>Ctrl + P</code> / <code>Cmd + P</code>）。</li>
+          <li>在列印對話框中，將「目的地」選擇為 <strong>「另存為 PDF」</strong> 或您的印表機。</li>
+          <li>紙張尺寸選擇 <strong>A4</strong>，邊界選擇「預設」即可產生專業排版之紙本手冊。</li>
+        </ol>
+      </section>
+
+      <!-- 頁尾 -->
+      <footer class="manual-footer">
+        <p>© 2026 嘉義縣大林鎮生活處方完整版系統｜版權所有・歡迎非營利推廣使用</p>
+        <p style="margin-top:4px;">指導單位：生活型態醫學學會・公共衛生與社區健康營造小組</p>
+      </footer>
+
+    </article>
+  </div>
+
+</body>
+</html>
